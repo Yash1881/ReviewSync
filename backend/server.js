@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 
@@ -28,7 +29,8 @@ app.get('/api/pr', async (req, res) => {
       {
         headers: {
           'Accept': 'application/vnd.github+json',
-          'User-Agent': 'ReviewSync'
+          'User-Agent': 'ReviewSync',
+          'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`
         }
       }
     );
@@ -39,6 +41,19 @@ app.get('/api/pr', async (req, res) => {
 
     const data = await response.json();
 
+    const filesResponse = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/pulls/${pull_number}/files`,
+      {
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'User-Agent': 'ReviewSync',
+          'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`
+        }
+      }
+    );
+
+    const filesData = await filesResponse.json();
+
     res.json({
       title: data.title,
       author: data.user.login,
@@ -47,9 +62,15 @@ app.get('/api/pr', async (req, res) => {
       changed_files: data.changed_files,
       additions: data.additions,
       deletions: data.deletions,
-      html_url: data.html_url
+      html_url: data.html_url,
+      files: filesData.map(file => ({
+        filename: file.filename,
+        status: file.status,
+        additions: file.additions,
+        deletions: file.deletions,
+        patch: file.patch
+      }))
     });
-
   } catch (err) {
     res.status(500).json({ error: 'Server error', message: err.message });
   }
