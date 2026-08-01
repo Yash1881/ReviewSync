@@ -35,9 +35,18 @@ app.get('/api/pr', async (req, res) => {
       }
     );
 
-    if (!response.ok) {
-      return res.status(response.status).json({ error: 'GitHub API error' });
-    }
+  if (!response.ok) {
+  if (response.status === 404) {
+    return res.status(404).json({ error: 'PR not found. Check the URL and try again.' });
+  }
+  if (response.status === 401) {
+    return res.status(401).json({ error: 'GitHub token is invalid or expired.' });
+  }
+  if (response.status === 403) {
+    return res.status(403).json({ error: 'Access denied. This repo may be private.' });
+  }
+  return res.status(response.status).json({ error: `GitHub API error (${response.status})` });
+}
 
     const data = await response.json();
 
