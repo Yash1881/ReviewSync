@@ -1,7 +1,7 @@
 ## ReviewSync — Build Progress
 
 **Current Ring:** Ring 1 (Static Full-Stack Foundation)
-**Completed:** Days 1–7
+**Completed:** Days 1–10
 
 **What's built:**
 - React + TypeScript frontend (Vite) on localhost:5173
@@ -17,20 +17,33 @@
 - DiffViewer component with colour coded lines (green/red/blue)
 - Line numbers on both old and new sides, exactly like GitHub
 - parsePatch function that tracks line counters through the diff
+- File tree sidebar with smooth scroll to file
+- Flexbox two-column layout (sidebar + main content)
+- Collapsible file blocks with open/close toggle
+- FileBlock component with local useState
+- Loading skeleton with shimmer animation
 - Git history clean, node_modules untracked
 
 **Folder structure:**
 Desktop/reviewsync/
   frontend/   ← React app, npm run dev → port 5173
+    src/
+      components/
+        Header.tsx
+        DiffViewer.tsx
+        FileBlock.tsx
+        Skeleton.tsx
   backend/    ← Express server, npm run dev → port 3001
 
-**Day 8 goal:**
-Add a file tree sidebar — list all changed files on the left, click a file to jump to its diff
+**Day 11 goal:**
+Push project to GitHub, set up a public repo so it's visible on your profile for placements
 
 **Key files:**
-- frontend/src/App.tsx — main page, PR URL input, fetch logic, useState, parsePrUrl
-- frontend/src/components/Header.tsx — header bar with login button
-- frontend/src/components/DiffViewer.tsx — line-by-line diff renderer with line numbers
+- frontend/src/App.tsx — main page, PR URL input, fetch logic, parsePrUrl
+- frontend/src/components/Header.tsx — header bar
+- frontend/src/components/DiffViewer.tsx — line-by-line diff with line numbers
+- frontend/src/components/FileBlock.tsx — collapsible file block with local state
+- frontend/src/components/Skeleton.tsx — shimmer loading skeleton
 - backend/server.js — Express server, /health, /api/pr with token auth and file diffs
 
 **Key concepts learned:**
@@ -52,4 +65,6 @@ Add a file tree sidebar — list all changed files on the left, click a file to 
 - Regular expressions — pattern matching to extract numbers from @@ header
 - Nullish coalescing (??) — fallback when a value is null
 - Type unions in TypeScript — 'added' | 'removed' | 'context' | 'hunk'
-- Git submodule problem and how to fix it with git rm --cached
+- Flexbox layout — display flex, flex:1, flexShrink
+- Local component state — useState inside a child component
+- CSS keyframe animations — shimmer effect with 
