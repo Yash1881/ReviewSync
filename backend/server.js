@@ -84,3 +84,44 @@ app.get('/api/pr', async (req, res) => {
     res.status(500).json({ error: 'Server error', message: err.message });
   }
 });
+app.post('/api/explain', async (req, res) => {
+  const { filename, patch } = req.body
+
+  if (!filename || !patch) {
+    return res.status(400).json({ error: 'Missing filename or patch' })
+  }
+
+  try {
+    const Groq = require('groq-sdk')
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+
+    const completion = await groq.chat.completions.create({
+     model: 'llama-3.3-70b-versatile',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a senior software engineer reviewing a pull request. Be concise and clear.'
+        },
+        {
+          role: 'user',
+          content: `File changed: ${filename}
+
+Here is the diff:
+${patch}
+
+Explain this code change in simple terms:
+1. What was changed?
+2. Why was it likely changed?
+3. Any potential issues or things to watch out for?`
+        }
+      ]
+    })
+
+    const text = completion.choices[0].message.content
+    res.json({ explanation: text })
+
+  } catch (err) {
+    console.log('Explain error:', err.message)
+    res.status(500).json({ error: 'AI explanation failed', message: err.message })
+  }
+})

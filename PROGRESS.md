@@ -1,7 +1,7 @@
 ## ReviewSync — Build Progress
 
 **Current Ring:** Ring 1 (Static Full-Stack Foundation)
-**Completed:** Days 1–10
+**Completed:** Days 1–13
 
 **What's built:**
 - React + TypeScript frontend (Vite) on localhost:5173
@@ -22,7 +22,11 @@
 - Collapsible file blocks with open/close toggle
 - FileBlock component with local useState
 - Loading skeleton with shimmer animation
-- Git history clean, node_modules untracked
+- Project pushed to GitHub (public repo)
+- README with setup instructions and project overview
+- Specific error messages for 404, 401, 403 responses
+
+**Repo:** https://github.com/Yash1881/ReviewSync
 
 **Folder structure:**
 Desktop/reviewsync/
@@ -35,8 +39,8 @@ Desktop/reviewsync/
         Skeleton.tsx
   backend/    ← Express server, npm run dev → port 3001
 
-**Day 11 goal:**
-Push project to GitHub, set up a public repo so it's visible on your profile for placements
+**Day 14 goal:**
+Ring 2 begins — AI code explanation via Claude API
 
 **Key files:**
 - frontend/src/App.tsx — main page, PR URL input, fetch logic, parsePrUrl
@@ -44,7 +48,7 @@ Push project to GitHub, set up a public repo so it's visible on your profile for
 - frontend/src/components/DiffViewer.tsx — line-by-line diff with line numbers
 - frontend/src/components/FileBlock.tsx — collapsible file block with local state
 - frontend/src/components/Skeleton.tsx — shimmer loading skeleton
-- backend/server.js — Express server, /health, /api/pr with token auth and file diffs
+- backend/server.js — Express server, /health, /api/pr with token auth, file diffs, error handling
 
 **Key concepts learned:**
 - req.query — reads query parameters from a URL in Express
@@ -62,9 +66,13 @@ Push project to GitHub, set up a public repo so it's visible on your profile for
 - Bearer token authentication — standard HTTP auth format
 - Unified diff format — @@ headers, + added, - removed lines
 - .map() on arrays in JSX to render lists of components
-- Regular expressions — pattern matching to extract numbers from @@ header
+- Regular expressions — pattern matching to extract @@ header
 - Nullish coalescing (??) — fallback when a value is null
-- Type unions in TypeScript — 'added' | 'removed' | 'context' | 'hunk'
+- Type unions in TypeScript
 - Flexbox layout — display flex, flex:1, flexShrink
 - Local component state — useState inside a child component
-- CSS keyframe animations — shimmer effect with 
+- CSS keyframe animations — shimmer effect
+- Default and optional props in TypeScript
+- HTTP status codes — 404, 401, 403 and what they mean
+- Git remote — pushing local commits to GitHub
+- README — documenting a project for others
