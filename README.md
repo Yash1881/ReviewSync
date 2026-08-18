@@ -1,61 +1,62 @@
-# ReviewSync
+## ReviewSync — Build Progress
 
-A full-stack GitHub Pull Request review tool built with React, TypeScript, and Node.js.
+**Current Ring:** Ring 4 (Collaboration)
+**Completed:** Days 1–16 (Rings 1–3 complete)
 
-## What it does
-
-- Paste any public GitHub PR URL and instantly see the diff
-- Colour-coded diff viewer (green for additions, red for deletions)
-- Line numbers on both old and new file sides
-- Collapsible file blocks
+**What's built:**
+- React + TypeScript frontend (Vite) on localhost:5173
+- Express backend on localhost:3001
+- GitHub PR URL input → calls GitHub API → returns PR data
+- Colour-coded diff viewer with line numbers (green/red/blue)
 - File tree sidebar with smooth scroll
-- Loading skeleton while data fetches
+- Collapsible FileBlock component with local useState
+- Loading skeleton with shimmer animation
+- Specific error messages (404, 401, 403)
+- Pushed to GitHub with README
+- Groq AI API integrated (/api/explain POST route)
+- "Explain this diff" button on each FileBlock
+- react-markdown renders AI explanation properly
+- GitHub OAuth — Login with GitHub works
+- Token saved to localStorage
+- User avatar and username shown in header after login
+- Logout button clears token
+- Token passed with every PR request (supports private repos)
 
-## Tech Stack
+**Repo:** https://github.com/Yash1881/ReviewSync
 
-**Frontend:** React, TypeScript, Vite  
-**Backend:** Node.js, Express  
-**API:** GitHub REST API  
+**Ring 4 goal:**
+WebSockets — multiple people on same PR, inline comments on diff lines
 
-## Running locally
+**Key files:**
+- frontend/src/App.tsx
+- frontend/src/components/Header.tsx
+- frontend/src/components/DiffViewer.tsx
+- frontend/src/components/FileBlock.tsx
+- frontend/src/components/Skeleton.tsx
+- backend/server.js
 
-### Prerequisites
-- Node.js installed
-- A GitHub Personal Access Token with `repo` scope
+**Backend routes:**
+- GET /health
+- GET /api/pr?owner=&repo=&pull_number=
+- POST /api/explain (body: { filename, patch })
+- GET /api/auth/github
+- GET /api/auth/callback
 
-### Backend
-```bash
-cd backend
-npm install
-echo "GITHUB_TOKEN=your_token_here" > .env
-npm run dev
-```
+**Environment variables needed:**
+- backend/.env: GITHUB_TOKEN, GROQ_API_KEY, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
 
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Then open `http://localhost:5173` and paste a GitHub PR URL.
-
-## Example PRs to try
-
-- `https://github.com/facebook/react/pull/31000`
-- `https://github.com/microsoft/vscode/pull/200000`
-
-## Project Structure
-
-```
-reviewsync/
-  frontend/        ← React + TypeScript (Vite)
-    src/
-      components/
-        Header.tsx        ← Top navigation bar
-        DiffViewer.tsx    ← Line-by-line diff renderer
-        FileBlock.tsx     ← Collapsible file section
-        Skeleton.tsx      ← Loading skeleton
-  backend/         ← Node.js + Express
-    server.js      ← API routes, GitHub integration
-```
+**Key concepts learned:**
+- req.query, req.body — GET vs POST data
+- Query string, template literals
+- useState, useEffect, async/await
+- localStorage — storing data in browser
+- Conditional rendering with ternary operator
+- OAuth flow — code exchange for token
+- Bearer token authentication
+- GitHub REST API
+- Flexbox layout, local component state
+- CSS keyframe animations
+- HTTP status codes
+- Git remote, pushing to GitHub
+- react-markdown for AI responses
+- WebSockets (coming in Ring 4)
