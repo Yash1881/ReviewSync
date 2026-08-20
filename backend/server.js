@@ -3,8 +3,19 @@ const express = require('express')
 const cors = require('cors')
 const axios = require('axios');
 
+const http = require('http'); 
+const { Server } = require('socket.io');
+
 const app = express()
 const PORT = 3001
+
+const server = http.createServer(app); 
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173", // Allow your React app to connect
+    methods: ["GET", "POST"]
+  }
+});
 
 // Get IDs from .env file
 const CLIENT_ID = process.env.GITHUB_CLIENT_ID;
@@ -24,11 +35,19 @@ app.get('/api/pr', async (req, res) => {
 
   const authHeader = req.headers.authorization;
   const userToken = authHeader && authHeader.split(' ')[1];
-  const tokenToUse = userToken || process.env.GITHUB_TOKEN;
+
+  // --- CHANGE THIS LINE ---
+  // We check if userToken exists AND is not the literal string "null"
+  const tokenToUse = (userToken && userToken !== 'null' && userToken !== 'undefined') 
+    ? userToken 
+    : process.env.GITHUB_TOKEN;
+  // ------------------------
 
   if (!owner || !repo || !pull_number) {
     return res.status(400).json({ error: 'Missing owner, repo, or pull_number' });
   }
+  
+  // ... rest of the code stays the same
 
   try {
     const response = await fetch(
@@ -151,6 +170,72 @@ app.get('/api/auth/callback', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend running on http://localhost:${PORT}`)
-})
+// --- PASTE AT THE VERY BOTTOM ---
+io.on('connection', (socket) => {
+  // Listen for new comments
+ socket.on('send-comment', (data) => {
+  // 1. LOG: Did the server even receive the message?
+  console.log("SERVER RECEIVED COMMENT:", data);
+
+  // 2. Broadcast to the room
+  // This sends it to everyone in 'data.prId' EXCEPT the sender
+  socket.to(data.prId).emit('receive-comment', {
+    lineIndex: data.lineIndex,
+    text: data.text
+  });
+  
+  console.log(`Relaying comment to room: ${data.prId}`);
+});
+  });
+  
+
+io.on('connection', (socket) => {
+  console.log('A user connected with ID:', socket.id);
+
+  // --- ALL socket.on LISTENERS MUST BE INSIDE THIS BLOCK ---
+
+  // 1. When a user joins a specific PR room
+  socket.on('join-pr', (prId) => {
+    socket.join(prId);
+    
+    // Logic to count people in this room
+    const clients = io.sockets.adapter.rooms.get(prId);
+    const numClients = clients ? clients.size : 0;
+
+    // Shout to everyone in the room what the new count is
+    io.to(prId).emit('update-viewer-count', numClients);
+    console.log(`Room: ${prId} | Total Viewers: ${numClients}`);
+  });
+
+  // 2. When a user posts a comment
+ socket.on('send-comment', (data) => {
+  // data contains { prId, lineIndex, text }
+  console.log(`COMMENT RECEIVED FOR ROOM: ${data.prId}`);
+
+  // Use io.to() to shout to EVERYONE in the room including the sender
+  // Or socket.to() to shout to everyone EXCEPT the sender
+  // We will use io.to() and change the frontend to handle it better
+  io.to(data.prId).emit('receive-comment', {
+    lineIndex: data.lineIndex,
+    text: data.text
+  });
+    console.log("Relayed comment for line:", data.lineIndex);
+  });
+
+  // 3. Optional: Real-time "Activity" message
+  socket.on('send-activity', (data) => {
+    socket.to(data.prId).emit('new-activity', data.message);
+  });
+
+  // When the user closes the tab
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+
+  // --- END OF THE CONNECTED USER'S LOGIC ---
+});
+
+// Finally, start the server
+server.listen(PORT, () => {
+  console.log(`ReviewSync Server running on http://localhost:${PORT}`);
+});
