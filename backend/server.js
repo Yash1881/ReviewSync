@@ -8,7 +8,8 @@ const http = require('http')
 const { Server } = require('socket.io')
 
 const app = express()
-const PORT = 3001
+// This tells the app: Use Railway's port if available, otherwise use 3001
+const PORT = process.env.PORT || 3001;
 const server = http.createServer(app)
 const io = new Server(server, {
   cors: { 
