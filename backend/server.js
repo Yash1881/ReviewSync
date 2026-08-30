@@ -50,10 +50,18 @@ app.get('/api/pr', async (req, res) => {
     })
     const filesData = await filesRes.json()
     res.json({
-      title: data.title, author: data.user.login, state: data.state,
-      additions: data.additions, deletions: data.deletions,
-      files: filesData.map(f => ({ filename: f.filename, patch: f.patch, additions: f.additions, deletions: f.deletions }))
-    })
+      title: data?.title || 'Invalid PR',
+      author: data?.user?.login || 'unknown',
+      state: data?.state || 'closed',
+      additions: data?.additions || 0,
+      deletions: data?.deletions || 0,
+      files: (filesData || []).map(f => ({ 
+        filename: f.filename, 
+        patch: f.patch, 
+        additions: f.additions, 
+        deletions: f.deletions 
+      }))
+    });
   } catch (err) { res.status(500).json({ error: err.message }) }
 })
 
