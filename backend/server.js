@@ -49,6 +49,7 @@ app.get('/api/pr', async (req, res) => {
       headers: { 'Authorization': `Bearer ${tokenToUse}` }
     })
     const filesData = await filesRes.json()
+    console.log('filesData received:', filesData)
     res.json({
       title: data?.title || 'Invalid PR',
       author: data?.user?.login || 'unknown',
