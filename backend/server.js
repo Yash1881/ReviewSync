@@ -98,8 +98,20 @@ app.get('/api/auth/callback', async (req, res) => {
   const code = req.query.code
   try {
     // This tells the backend to send the user to Vercel instead of localhost
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-res.redirect(`${frontendUrl}?token=${response.data.access_token}`);
+// 1. Trade the 'code' for a real 'access_token'
+    const tokenRes = await axios.post('https://github.com/login/oauth/access_token', {
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      code: code
+    }, {
+      headers: { Accept: 'application/json' }
+    });
+
+    const accessToken = tokenRes.data.access_token;
+
+    // 2. Send the user to Vercel (FRONTEND_URL) with the token
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    res.redirect(`${frontendUrl}?token=${accessToken}`);
   } catch (e) { res.status(500).send("Auth failed") }
 })
 
