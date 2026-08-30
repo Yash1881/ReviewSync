@@ -299,7 +299,7 @@ function App() {
     }
     if (token) {
       fetch('https://api.github.com/user', { headers: { Authorization: `Bearer ${token}` } })
-        .then(r => r.json()).then(data => setUser({ login: data.login, avatar_url: data.avatar_url }))
+       .then(r => r.json()).then(data => data?.login && setUser({ login: data.login, avatar_url: data.avatar_url }))
     }
   }, [])
 

@@ -46,8 +46,8 @@ function Header({ user, onLogin, onLogout }: Props) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <img
-                src={user.avatar_url}
-                alt={user.login}
+                src={user?.avatar_url}
+                alt={user?.login}
                 style={{
                   width: '28px',
                   height: '28px',
@@ -55,7 +55,7 @@ function Header({ user, onLogin, onLogout }: Props) {
                   border: '1px solid #21262d'
                 }}
               />
-              <span style={{ color: '#e6edf3', fontSize: '0.85rem', fontWeight: 500 }}>{user.login}</span>
+              <span style={{ color: '#e6edf3', fontSize: '0.85rem', fontWeight: 500 }}>{user?.login}</span>
             </div>
             <button
               onClick={onLogout}
